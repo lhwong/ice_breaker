@@ -1,6 +1,12 @@
 from dotenv import load_dotenv
 from langchain.prompts.prompt import PromptTemplate
-from langchain_openai import ChatOpenAI
+#from langchain_openai import ChatOpenAI
+from langchain_ollama import OllamaLLM
+from langchain_core.output_parsers import StrOutputParser
+
+
+
+
 
 if __name__ == "__main__":
     load_dotenv()
@@ -16,18 +22,23 @@ In October 2002, eBay acquired PayPal for $1.5 billion, and that same year, with
     """
 
     summary_template = """
-    given the information {information} about a person I want you to create:
-    1. A short summary
-    2. two interesting facts about them
+    given the information {information} about a person I want you to:
+    1. Provide a short summary 
+    2. Provide two interesting facts about the person
     """
 
     summary_prompt_template = PromptTemplate(
         input_variables=["information"], template=summary_template
     )
 
-    llm = ChatOpenAI(temperature=0)
+    #llm = ChatOpenAI(temperature=0)
+    llm = OllamaLLM(model="llama3.2")
 
-    chain = summary_prompt_template | llm
+
+    chain = (summary_prompt_template | llm | StrOutputParser())
+    
     res = chain.invoke(input={"information": information})
 
     print(res)
+
+  
